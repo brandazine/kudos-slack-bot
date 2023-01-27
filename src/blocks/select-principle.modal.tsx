@@ -36,7 +36,7 @@ export const SelectPrincipleModal = (props: SelectPrincipleModalProps) => {
             </small>
           </Checkbox>
           <Checkbox value={BrandazinePrinciple.BeACurator}>
-            <b>Be a curator</b>:Inspire each other
+            <b>Be a curator</b>: Inspire each other
             <small>
               우리는 우리의 창의력과 뚜렷한 비전, 인정과 존중을 통해 서로에게 영감을 줍니다. 이러한 강력한 영감을 통해
               큐레이터, 브랜드 그리고 팀원들의 성장을 돕습니다.

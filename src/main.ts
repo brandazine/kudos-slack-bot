@@ -85,9 +85,15 @@ async function main() {
   slack.use(async ({ next, context }) => RequestContext.createAsync(orm.em, next));
 
   slack.message(/.*/, async ({ message, client }) => {
-    if (message.type !== 'message' || message.subtype || message.thread_ts) {
+    if (message.type !== 'message' || message.subtype || message.thread_ts || !message.text) {
       return;
     }
+
+    // must mention this bot
+    if (!message.text.includes(`<@${config.envConfig.slack.botUserId}`)) {
+      return;
+    }
+
     console.info(util.inspect(message, { depth: Infinity, colors: true }));
 
     const em = orm.em.getContext();
@@ -155,6 +161,7 @@ async function main() {
 
     const praise = new Praise();
     praise.slackMessageTs = message.ts;
+    praise.slackChannelId = message.channel;
     praise.praiser = user;
     praise.originalSlackMessage = message;
     praise.originalText = message.text ?? '';

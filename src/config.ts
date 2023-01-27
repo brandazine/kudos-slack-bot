@@ -6,6 +6,7 @@ export class Config {
       token: this.env.SLACK_TOKEN,
       appToken: this.env.SLACK_APP_TOKEN,
       signingSecret: this.env.SLACK_SIGNING_SECRET,
+      botUserId: this.env.SLACK_BOT_USER_ID,
     },
   });
 }

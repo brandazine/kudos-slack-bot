@@ -15,7 +15,7 @@ export const BrandazinePrincipleLabels = Object.freeze({
   [BrandazinePrinciple.MaximizeYourPotential]: 'Maximize your potential',
   [BrandazinePrinciple.HackYourSuccess]: 'Hack your success',
   [BrandazinePrinciple.BeACurator]: 'Be a curator',
-  [BrandazinePrinciple.ChampionTheCommunity]: 'champion the community',
+  [BrandazinePrinciple.ChampionTheCommunity]: 'Champion the community',
   [BrandazinePrinciple.BeYourTrueSelf]: 'Be your true self',
 }) as Record<BrandazinePrinciple, string>;
 

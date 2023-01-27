@@ -29,6 +29,9 @@ export class Praise {
   @Property({ type: 'varchar', length: 255 })
   public slackMessageTs!: string;
 
+  @Property({ type: 'varchar', length: 255 })
+  public slackChannelId!: string;
+
   @ManyToOne(() => User, { type: 'uuid' })
   public praiser!: User;
 

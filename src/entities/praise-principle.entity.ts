@@ -24,6 +24,7 @@ export class PraisePrinciple {
   public praise!: Praise;
 
   @Enum({
+    type: 'text',
     items: () => BrandazinePrinciple,
   })
   public selectedPrinciple!: BrandazinePrinciple;

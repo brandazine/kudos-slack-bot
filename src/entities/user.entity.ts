@@ -14,6 +14,7 @@ export class User {
   public id: string = crypto.randomUUID();
 
   @Enum({
+    type: 'text',
     items: () => UserType,
   })
   public type!: UserType;

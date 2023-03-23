@@ -15,6 +15,9 @@ import JSXSlack from 'jsx-slack';
 import { PraiseResponseBlock } from './blocks/praise-response.block';
 import { SelectPrincipleModal } from './blocks/select-principle.modal';
 import { PraisePrinciple } from './entities/praise-principle.entity';
+import pLimit from 'p-limit';
+
+import schedule from 'node-schedule';
 
 /** Slack Text Element */
 interface TextElement {
@@ -279,43 +282,59 @@ async function main() {
       text,
     });
 
-    // add proper reactions
-    const reactionsResponse = await client.reactions.list({
-      full: true,
-      channel: channelId,
-      timestamp: praise.slackMessageTs,
-    });
-    if (!reactionsResponse.ok) {
-      console.error(reactionsResponse.error);
-      return;
-    }
-    const addedReactions = reactionsResponse.items!.flatMap(
-      (item) => (item.message && item.message.reactions?.map((reaction) => reaction.name)) ?? [],
-    );
-    // exclude addedReactions
-    const reactionsToAdd = addedPraisePrinciples
-      .map(({ selectedPrinciple }) => BrandazinePrincipleReactions[selectedPrinciple])
-      .filter((reaction) => !addedReactions.includes(reaction));
-    if (reactionsToAdd.length > 0) {
-      await Promise.allSettled(
-        reactionsToAdd.map((reaction) =>
-          client.reactions.add({
-            channel: channelId,
+    await Promise.allSettled(
+      addedPraisePrinciples.map(async (praisePrinciple) => {
+        await client.reactions
+          .add({
+            channel: praise.slackChannelId ?? channelId,
             timestamp: praise.slackMessageTs,
-            name: reaction,
-          }),
-        ),
-      );
-    }
+            name: BrandazinePrincipleReactions[praisePrinciple.selectedPrinciple],
+          })
+          .catch(console.error);
+      }),
+    );
   });
 
   await slack.start();
   console.log('⚡️ Bolt app started');
 
+  const sendKudosReminder = async () => {
+    const em = orm.em.getContext();
+    const userRepository = em.getRepository<User, UserRepository>(User);
+
+    const slackUsers = await slack.client.users.list();
+    if (!slackUsers.ok) {
+      console.error(slackUsers.error);
+      return;
+    }
+
+    const slackUserIds = slackUsers
+      .members!.filter((member) => !member.deleted && !member.is_restricted && !member.is_bot)
+      .map((member) => member.id);
+    const messagePayloads = slackUserIds?.map((id) => ({
+      channel: id!,
+      text: `*[KUDOS RELAY :checkered_flag:]*\n오늘도 수고하는 <@${id}>님, 감사합니다 :pray:\n오늘 하루 고마운 사람이 있었나요?\n용기를 내 당신의 고마움을 표현해보세요!\n<#C014JTBPG9H>`,
+      mrkdwn: true,
+    }));
+
+    const limit = pLimit(7);
+    await Promise.allSettled(
+      messagePayloads!.map((message) =>
+        limit(async () => {
+          console.info(`[send-kudos-reminder] sending to ${message.channel}`);
+          await slack.client.chat.postMessage(message);
+        }),
+      ),
+    );
+  };
+
+  schedule.scheduleJob('0 17 * * *', sendKudosReminder);
+
   Object.assign(repl.start('> ').context, {
     slack,
     client: slack.client,
     orm,
+    sendKudosReminder,
   });
 }
 

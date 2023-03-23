@@ -20,9 +20,9 @@ export const BrandazinePrincipleLabels = Object.freeze({
 }) as Record<BrandazinePrinciple, string>;
 
 export const BrandazinePrincipleReactions = Object.freeze({
-  [BrandazinePrinciple.MaximizeYourPotential]: 'muscle',
-  [BrandazinePrinciple.HackYourSuccess]: 'dark_sunglasses',
-  [BrandazinePrinciple.BeACurator]: 'sparkles',
-  [BrandazinePrinciple.ChampionTheCommunity]: 'raised_hands',
-  [BrandazinePrinciple.BeYourTrueSelf]: 'handshake',
+  [BrandazinePrinciple.MaximizeYourPotential]: 'trophy',
+  [BrandazinePrinciple.HackYourSuccess]: 'hammer_and_wrench',
+  [BrandazinePrinciple.BeACurator]: 'bulb',
+  [BrandazinePrinciple.ChampionTheCommunity]: 'handshake',
+  [BrandazinePrinciple.BeYourTrueSelf]: 'index_pointing_at_the_viewer',
 }) as Record<BrandazinePrinciple, string>;
